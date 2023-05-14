@@ -5,7 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Service\MailSender;
+use App\Service\RegistrationMessageSender;
 use Symfony\Component\Mime\Email;
 
 class RegisterController extends AbstractController
@@ -13,16 +13,18 @@ class RegisterController extends AbstractController
     /**
      * @Route("/register", name="app_register")
      */
-    public function index(MailSender $mailSender): Response
+    public function index(RegistrationMessageSender $registrationMessageSender): Response
     {
-        $email = new Email();
-        $email->from('wp@wp.pl');
+        $message = new Email();
+        $message->from('wp@wp.pl'); // mail może pochodzić z konfiguracji, formularza, bazy danych
+        $message->to('mariusz.madanowski@gmail.com'); // mail może pochodzić z konfiguracji, formularza, bazy danych
 
-        $email->subject('Twoje konto zostało założone.');
-        $email->text('Twoje konto zostało założone.');
-        $email->html('<p>Twoje konto zostało założone.</p>');
-
-        $mailSender->sendMail($email);
+        try {
+          $registrationMessageSender->setMessage($message);
+          $registrationMessageSender->send();
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
 
         return $this->render('register/index.html.twig', [
             'controller_name' => 'RegisterController'

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller\Tests;
+namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -12,6 +12,7 @@ class RegisterControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/register');
 
         $this->assertResponseIsSuccessful();
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $this->assertSelectorTextContains('h1', 'Hello RegisterController!');
 
         $this->assertEmailCount(1);
